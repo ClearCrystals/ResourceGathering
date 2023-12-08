@@ -1,0 +1,28 @@
+﻿<Properties StartupConfiguration="{2FCF3AD2-A726-3853-F1AC-FABF6DD0A35D}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GathererAI.cs">
+    <Files>
+      <File FileName="Assets/Scripts/GathererAI.cs" Line="67" Column="22" />
+      <File FileName="Assets/Scripts/Unit.cs" />
+      <File FileName="Assets/Scripts/IUnits.cs" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="ResourceGathering" expanded="True">
+            <Node name="Assets" expanded="True" selected="True">
+              <Node name="Imported" expanded="True" />
+              <Node name="Scripts" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="9f48069a-1210-4cbf-a4fc-52ccd758f093" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
