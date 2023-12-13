@@ -15,7 +15,7 @@ public class GathererAI : MonoBehaviour
 
     private IUnits unit;
     private State state;
-    private Transform resourceNodeTransform;
+    private ResourceNode resourceNode;
     private int goldInventoryAmount;
     private Transform storageTransform;
 
@@ -37,16 +37,25 @@ public class GathererAI : MonoBehaviour
         {
             case State.Idle:
                 Debug.Log("[GathererAI] State: Idle. Finding resource node.");
-                resourceNodeTransform = GameHandler.GetResourceNode_Static();
-                state = State.MovingToResourceNode;
-                Debug.Log($"[GathererAI] Moving to resource node at position: {resourceNodeTransform.position}");
-                break;
+                resourceNode = GameHandler.GetResourceNode_Static(); // This might return null
 
+                if (resourceNode != null)
+                {
+                    state = State.MovingToResourceNode;
+                    Debug.Log($"[GathererAI] Moving to resource node at position: {resourceNode.GetPosition()}");
+                }
+                else
+                {
+                    Debug.Log("[GathererAI] No resource nodes available.");
+                    // Handle the situation when no resource nodes are available
+                    // Maybe keep the state as Idle or implement some other logic
+                }
+            break;
             case State.MovingToResourceNode:
                 if (unit.IsIdle())
                 {
                     Debug.Log("[GathererAI] State: MovingToResourceNode. Starting move.");
-                    unit.MoveTo(resourceNodeTransform.position, 0.5f, () =>
+                    unit.MoveTo(resourceNode.GetPosition(), 0.5f, () =>
                     {
                         Debug.Log("[GathererAI] Arrived at resource node.");
                         state = State.GatheringResources;
@@ -57,7 +66,7 @@ public class GathererAI : MonoBehaviour
             case State.GatheringResources:
                 if (unit.IsIdle())
                 {
-                    if (goldInventoryAmount > 0)
+                    if (goldInventoryAmount > 2)
                     {
                         Debug.Log("[GathererAI] State: GatheringResources. Moving to storage.");
                         storageTransform = GameHandler.GetStorageNode_Static();
@@ -66,8 +75,9 @@ public class GathererAI : MonoBehaviour
                     else
                     {
                         Debug.Log("[GathererAI] State: GatheringResources. Starting mining animation.");
-                        unit.PlayAnimationMine(resourceNodeTransform.position, () =>
+                        unit.PlayAnimationMine(resourceNode.GetPosition(), () =>
                         {
+                            resourceNode.GrabResources();
                             goldInventoryAmount++;
                             Debug.Log($"[GathererAI] Mined gold. Inventory: {goldInventoryAmount}");
                         });
@@ -81,6 +91,7 @@ public class GathererAI : MonoBehaviour
                     Debug.Log("[GathererAI] State: MovingToStorage. Starting move.");
                     unit.MoveTo(storageTransform.position, 0.5f, () =>
                     {
+                        GameResources.AddGoldAmount(goldInventoryAmount);
                         Debug.Log("[GathererAI] Arrived at storage. Gold deposited.");
                         goldInventoryAmount = 0;
                         state = State.Idle;
