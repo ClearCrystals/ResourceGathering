@@ -49,12 +49,13 @@ public class Unit : MonoBehaviour, IUnits
     {
         isIdle = false;
 
-        // Optionally look at the mining position
-        transform.LookAt(new Vector3(lookAtPosition.x, transform.position.y, lookAtPosition.z));
+        // Optionally look at the mining position (if needed)
+        // transform.LookAt(new Vector3(lookAtPosition.x, transform.position.y, lookAtPosition.z));
 
+        // Wait for the duration of 'miningDuration' without playing any animation
         yield return new WaitForSeconds(miningDuration);
 
         isIdle = true;
         onAnimationCompleted?.Invoke();
-    }
+}
 }

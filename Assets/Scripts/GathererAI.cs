@@ -36,17 +36,17 @@ public class GathererAI : MonoBehaviour
         switch (state)
         {
             case State.Idle:
-                Debug.Log("[GathererAI] State: Idle. Finding resource node.");
-                resourceNode = GameHandler.GetResourceNode_Static(); // This might return null
+                //Debug.Log("[GathererAI] State: Idle. Finding resource node.");
+                //resourceNode = GameHandler.GetResourceNode_Static(); // This might return null
 
                 if (resourceNode != null)
                 {
                     state = State.MovingToResourceNode;
-                    Debug.Log($"[GathererAI] Moving to resource node at position: {resourceNode.GetPosition()}");
+                    //Debug.Log($"[GathererAI] Moving to resource node at position: {resourceNode.GetPosition()}");
                 }
                 else
                 {
-                    Debug.Log("[GathererAI] No resource nodes available.");
+                    //Debug.Log("[GathererAI] No resource nodes available.");
                     // Handle the situation when no resource nodes are available
                     // Maybe keep the state as Idle or implement some other logic
                 }
@@ -54,14 +54,29 @@ public class GathererAI : MonoBehaviour
             case State.MovingToResourceNode:
                 if (unit.IsIdle())
                 {
-                    Debug.Log("[GathererAI] State: MovingToResourceNode. Starting move.");
-                    unit.MoveTo(resourceNode.GetPosition(), 0.5f, () =>
+                    if (resourceNode.HasResources())
                     {
-                        Debug.Log("[GathererAI] Arrived at resource node.");
-                        state = State.GatheringResources;
-                    });
+                        Debug.Log("[GathererAI] State: MovingToResourceNode. Starting move.");
+                        unit.MoveTo(resourceNode.GetPosition(), 0.5f, () =>
+                        {
+                            if (resourceNode.HasResources())
+                            {
+                                state = State.GatheringResources;
+                            }
+                            else
+                            {
+                                Debug.Log("[GathererAI] Resource node depleted upon arrival.");
+                                state = State.Idle;
+                            }
+                        });
+                    }
+                    else
+                    {
+                        //Debug.Log("[GathererAI] Resource node depleted before starting move.");
+                        state = State.Idle;
+                    }
                 }
-                break;
+            break;
 
             case State.GatheringResources:
                 if (unit.IsIdle())
@@ -99,5 +114,9 @@ public class GathererAI : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    public void SetResourceNode(ResourceNode resourceNode) {
+        this.resourceNode = resourceNode;
     }
 }

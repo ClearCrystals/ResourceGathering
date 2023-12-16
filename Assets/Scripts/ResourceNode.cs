@@ -1,17 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using CodeMonkey;
+using CodeMonkey.Utils;
 
 public class ResourceNode
 {
     private Transform resourcesNodeTransform;
-    private int resourceAmount; // Declare the resourceAmount field
+    private int resourceAmount;
+
+    public event EventHandler OnResourceNodeClicked;
 
     public ResourceNode(Transform resourceNodeTransform) 
     {
         this.resourcesNodeTransform = resourceNodeTransform;
-        resourceAmount = 1; // Initialize with some default value, or modify as needed
+        resourceAmount = 6; // Initialize with some default value, or modify as needed
+        resourceNodeTransform.GetComponent<Button_Sprite>().ClickFunc = () => {
+            OnResourceNodeClicked?.Invoke(this, EventArgs.Empty);
+        };
     }
 
     public Vector3 GetPosition() 
@@ -19,9 +24,9 @@ public class ResourceNode
         return resourcesNodeTransform.position;
     }
 
-    public Transform GetTransform()
+    public bool HasResources() 
     {
-        return resourcesNodeTransform;
+        return resourceAmount > 0;
     }
 
     public void GrabResources() 
@@ -29,12 +34,23 @@ public class ResourceNode
         if (resourceAmount > 0)
         {
             resourceAmount -= 1; // Decrease resource amount
-            CMDebug.TextPopupMouse("ResourceAmount:" + resourceAmount);
+            if (resourceAmount <= 0)
+            {
+                // Handle resource depletion
+                Debug.Log("ResourceNode depleted: " + resourcesNodeTransform.name);
+                // You can add code here to make the node inactive
+                // For example, disable its collider or change its appearance
+            }
+        }
+        else
+        {
+            Debug.Log("Attempted to grab resources from a depleted node: " + resourcesNodeTransform.name);
         }
     }
 
-    public bool HasResources() 
+    public void Clicked() 
     {
-        return resourceAmount > 0;
+        Debug.Log("ResourceNode clicked: " + resourcesNodeTransform.name);
+        OnResourceNodeClicked?.Invoke(this, EventArgs.Empty);
     }
 }
